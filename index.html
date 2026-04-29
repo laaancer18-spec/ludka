@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Гайд по лудомании ♠</title>
+<meta name="description" content="Покерный гайд для новичков — комбинации, тренировка, стартовые руки">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#1a2e1c;display:flex;align-items:flex-start;justify-content:center;min-height:100vh;padding:24px 16px;font-family:'DM Mono',monospace}
+.shell{background:#0d1b0e;color:#e8dfc8;border-radius:20px;overflow:hidden;display:flex;flex-direction:column;width:100%;max-width:520px;box-shadow:0 16px 48px rgba(0,0,0,0.6)}
+.header{background:#0a1509;padding:18px 16px 12px;border-bottom:1px solid rgba(212,175,55,0.3);flex-shrink:0}
+.game-title{font-family:'Playfair Display',serif;font-size:19px;font-weight:900;color:#d4af37;letter-spacing:0.12em;text-transform:uppercase;text-align:center;margin-bottom:14px}
+.tabs{display:flex;gap:6px}
+.content{flex:1;display:flex;flex-direction:column}
+.screen{display:none;flex:1;flex-direction:column}
+.screen.active{display:flex}
+
+/* КОМБИНАЦИИ */
+.ref-screen{padding:14px 10px 24px;flex:1}
+.ref-title{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:#d4af37;text-align:center;margin-bottom:2px}
+.ref-sub{font-size:10px;color:rgba(212,175,55,0.4);text-align:center;letter-spacing:0.15em;text-transform:uppercase;margin-bottom:12px}
+.ref-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ref-row{background:#162714;border:1px solid rgba(212,175,55,0.15);border-radius:14px;padding:9px 8px;display:flex;flex-direction:column;gap:9px;transition:border-color 0.2s}
+.ref-row:hover{border-color:rgba(212,175,55,0.35)}
+.ref-top{display:flex;align-items:flex-start;gap:7px}
+.ref-rank{width:18px;height:18px;border-radius:50%;background:rgba(212,175,55,0.12);border:1px solid rgba(212,175,55,0.3);display:flex;align-items:center;justify-content:center;font-size:9px;color:#d4af37;flex-shrink:0;margin-top:1px}
+.ref-name{font-family:'Playfair Display',serif;font-size:12px;font-weight:700;color:#f5e07a;line-height:1.2}
+.ref-odds{font-size:10px;color:#d4af37;font-weight:500;margin-top:1px}
+.ref-desc{font-size:9px;color:rgba(232,223,200,0.4);line-height:1.3;margin-top:1px}
+.ref-cards-row{display:flex;gap:3px;justify-content:center;flex-wrap:wrap}
+.pc{width:49px;height:69px;background:#faf8f2;border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 2px 5px rgba(0,0,0,0.5);position:relative;transition:transform 0.15s}
+.pc.hl{background:#fffbe8;box-shadow:0 0 0 2px #d4af37,0 3px 8px rgba(0,0,0,0.5);transform:translateY(-4px) scale(1.08);z-index:2}
+.pc .pr{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;line-height:1}
+.pc .ps{font-size:18px;line-height:1}
+.cr{color:#c0392b}.cb{color:#1a1a1a}
+@keyframes cdrop{from{transform:translateY(-8px);opacity:0}to{transform:translateY(0);opacity:1}}
+.pc{animation:cdrop 0.25s ease backwards}
+
+/* ТРЕНИРОВКА */
+.quiz-screen{flex:1;display:flex;flex-direction:column;align-items:center;padding:16px 14px 20px}
+.quiz-header{font-family:'Playfair Display',serif;font-size:25px;font-weight:700;color:#d4af37;text-align:center;margin-bottom:4px}
+.quiz-sub{font-size:13px;color:rgba(212,175,55,0.4);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:12px}
+.q-stats{display:flex;gap:26px;margin-bottom:12px}
+.q-stat{text-align:center}
+.q-snum{font-family:'Playfair Display',serif;font-size:24px;color:#d4af37}
+.q-slbl{font-size:11px;color:rgba(232,223,200,0.35);letter-spacing:0.1em;text-transform:uppercase}
+.q-progress{width:100%;max-width:420px;height:4px;background:rgba(255,255,255,0.07);border-radius:2px;margin-bottom:14px}
+.q-pfill{height:100%;background:#d4af37;border-radius:2px;transition:width 0.4s}
+.trap-badge{font-size:13px;padding:5px 16px;border-radius:10px;background:rgba(192,57,43,0.25);border:1px solid rgba(192,57,43,0.6);color:#e74c3c;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:10px;font-weight:500}
+.trap-hidden{visibility:hidden}
+.qstack{width:100%;max-width:420px;height:320px;position:relative;margin-bottom:14px;cursor:grab;flex-shrink:0;touch-action:none}
+.qstack:active{cursor:grabbing}
+.qbg2{position:absolute;width:90%;left:5%;top:8px;height:298px;background:#1a2e1c;border-radius:18px;transform:rotate(2deg) scale(0.97)}
+.qbg1{position:absolute;width:90%;left:5%;top:4px;height:298px;background:#162614;border-radius:18px;transform:rotate(-1.5deg) scale(0.985)}
+.qcard{position:absolute;width:100%;top:0;height:310px;background:#1e3320;border-radius:20px;border:1px solid rgba(212,175,55,0.35);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px 14px;box-shadow:0 8px 32px rgba(0,0,0,0.5);user-select:none;-webkit-user-select:none;will-change:transform}
+.sov{position:absolute;inset:0;border-radius:20px;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:28px;font-weight:700;opacity:0;pointer-events:none;transition:opacity 0.1s}
+.sov-y{background:rgba(46,139,87,0.25);color:#2ecc71;border:2px solid rgba(46,139,87,0.5)}
+.sov-n{background:rgba(192,57,43,0.25);color:#e74c3c;border:2px solid rgba(192,57,43,0.5)}
+.qcard-label{font-size:12px;color:rgba(212,175,55,0.5);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:7px}
+.qcard-claim{font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:#f5e07a;text-align:center;margin-bottom:12px}
+.qcard-cards{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;justify-content:center}
+.qcard-cards .pc{width:52px;height:74px}
+.qcard-cards .pc .pr{font-size:22px}
+.qcard-cards .pc .ps{font-size:22px}
+.qcard-odds{font-size:13px;padding:5px 14px;border-radius:12px;background:rgba(212,175,55,0.1);border:1px solid rgba(212,175,55,0.25);color:#d4af37;margin-bottom:6px}
+.qcard-desc{font-size:13px;color:rgba(232,223,200,0.4);text-align:center;max-width:300px;line-height:1.5}
+.fflash{position:absolute;inset:0;border-radius:20px;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:36px;font-weight:700;pointer-events:none;opacity:0}
+.ff-ok{background:rgba(46,139,87,0.3);color:#2ecc71}
+.ff-err{background:rgba(192,57,43,0.3);color:#e74c3c}
+@keyframes fa{0%{opacity:0}20%{opacity:1}80%{opacity:1}100%{opacity:0}}
+.doflash{animation:fa 0.65s ease forwards}
+@keyframes swR{to{transform:translateX(140%) rotate(15deg);opacity:0}}
+@keyframes swL{to{transform:translateX(-140%) rotate(-15deg);opacity:0}}
+.sw-r{animation:swR 0.35s ease forwards}
+.sw-l{animation:swL 0.35s ease forwards}
+.hint-row{display:flex;gap:20px;align-items:center;margin-bottom:12px}
+.hint{display:flex;align-items:center;gap:8px;font-size:13px;color:rgba(232,223,200,0.35)}
+.hicon{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px}
+.hi-n{background:rgba(192,57,43,0.15);border:1px solid rgba(192,57,43,0.25);color:#c0392b}
+.hi-y{background:rgba(46,139,87,0.15);border:1px solid rgba(46,139,87,0.25);color:#2e8b57}
+.act-row{display:flex;gap:18px}
+.abtn{width:66px;height:66px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:24px;transition:transform 0.15s}
+.abtn:active{transform:scale(0.88)}
+.abtn-n{background:rgba(192,57,43,0.25);border:1.5px solid rgba(192,57,43,0.6);color:#e74c3c}
+.abtn-y{background:rgba(46,139,87,0.25);border:1.5px solid rgba(46,139,87,0.6);color:#2ecc71}
+.result-wrap{width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px}
+.result-wrap h2{font-family:'Playfair Display',serif;font-size:30px;color:#d4af37;margin-bottom:8px}
+.result-wrap p{font-size:14px;color:rgba(232,223,200,0.5);line-height:1.8;margin-bottom:18px}
+.rbtn{background:rgba(212,175,55,0.12);border:1px solid rgba(212,175,55,0.35);color:#d4af37;font-family:'DM Mono',monospace;font-size:13px;letter-spacing:0.1em;padding:11px 24px;border-radius:24px;cursor:pointer}
+.rbtn:hover{background:rgba(212,175,55,0.22)}
+
+/* РАСКЛАДЫ */
+.hands-screen{padding:16px 14px 32px;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.hands-title{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:#d4af37;text-align:center;margin-bottom:2px}
+.hands-sub{font-size:10px;color:rgba(212,175,55,0.4);text-align:center;letter-spacing:0.15em;text-transform:uppercase;margin-bottom:10px}
+.legend{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:14px}
+.leg-item{display:flex;align-items:center;gap:5px;font-size:10px;color:rgba(232,223,200,0.7)}
+.leg-dot{width:11px;height:11px;border-radius:3px;flex-shrink:0}
+.ld-blue{background:#2980b9}.ld-green{background:#27ae60}.ld-yellow{background:#b8860b}.ld-red{background:#c0392b}
+.hands-group{margin-bottom:20px}
+.group-header{display:flex;align-items:flex-start;gap:8px;padding:8px 10px;border-radius:9px;margin-bottom:12px}
+.gh-blue{background:rgba(41,128,185,0.14);border:1px solid rgba(41,128,185,0.35)}
+.gh-green{background:rgba(39,174,96,0.12);border:1px solid rgba(39,174,96,0.3)}
+.gh-yellow{background:rgba(212,175,55,0.1);border:1px solid rgba(212,175,55,0.28)}
+.gh-red{background:rgba(192,57,43,0.12);border:1px solid rgba(192,57,43,0.3)}
+.gh-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0;margin-top:3px}
+.ghd-blue{background:#2980b9}.ghd-green{background:#27ae60}.ghd-yellow{background:#b8860b}.ghd-red{background:#c0392b}
+.gh-title{font-family:'Playfair Display',serif;font-size:12px;font-weight:700}
+.gh-blue .gh-title{color:#5dade2}.gh-green .gh-title{color:#58d68d}.gh-yellow .gh-title{color:#d4af37}.gh-red .gh-title{color:#e74c3c}
+.gh-hint{font-size:9px;margin-top:2px;line-height:1.4}
+.gh-blue .gh-hint{color:rgba(93,173,226,0.6)}.gh-green .gh-hint{color:rgba(88,214,141,0.6)}.gh-yellow .gh-hint{color:rgba(212,175,55,0.6)}.gh-red .gh-hint{color:rgba(231,76,60,0.6)}
+.hands-list{display:flex;flex-wrap:wrap;gap:13px 18px;padding:2px 2px}
+.hand-pair{display:flex;gap:3px}
+.hc{width:52px;height:74px;background:#faf8f2;border-radius:7px;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 2px 5px rgba(0,0,0,0.4)}
+.hc .hr{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;line-height:1}
+.hc .hs{font-size:20px;line-height:1}
+.hc.gbl{box-shadow:0 0 0 2px #2980b9,0 2px 6px rgba(0,0,0,0.4);background:#eaf4fc}
+.hc.ggr{box-shadow:0 0 0 2px #27ae60,0 2px 6px rgba(0,0,0,0.4);background:#eafaf1}
+.hc.gyw{box-shadow:0 0 0 2px #b8860b,0 2px 6px rgba(0,0,0,0.4);background:#fefde7}
+.hc.grd{box-shadow:0 0 0 2px #c0392b,0 2px 6px rgba(0,0,0,0.4);background:#fdf2f2}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="header">
+    <div class="game-title">♠ Гайд по лудомании ♠</div>
+    <div class="tabs">
+      <button id="tab0" onclick="goTab(0)" style="flex:1;padding:9px 3px;border-radius:10px;cursor:pointer;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.04em;text-transform:uppercase;border:2px solid #d4af37;background:#ffffff;color:#0a1509;font-weight:700">Комбинации</button>
+      <button id="tab1" onclick="goTab(1)" style="flex:1;padding:9px 3px;border-radius:10px;cursor:pointer;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.04em;text-transform:uppercase;border:2px solid rgba(212,175,55,0.5);background:#ffffff;color:#0a1509;font-weight:500">Тренировка</button>
+      <button id="tab2" onclick="goTab(2)" style="flex:1;padding:9px 3px;border-radius:10px;cursor:pointer;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.04em;text-transform:uppercase;border:2px solid rgba(212,175,55,0.5);background:#ffffff;color:#0a1509;font-weight:500">Расклады</button>
+    </div>
+  </div>
+  <div class="content">
+
+    <div class="screen active" id="scrRef">
+      <div class="ref-screen">
+        <div class="ref-title">Комбинации покера</div>
+        <div class="ref-sub">от слабой к сильной</div>
+        <div class="ref-grid" id="refGrid"></div>
+      </div>
+    </div>
+
+    <div class="screen" id="scrQuiz">
+      <div class="quiz-screen">
+        <div class="quiz-header">Верно или нет?</div>
+        <div class="quiz-sub">Свайп вправо — верно · влево — нет</div>
+        <div class="q-stats">
+          <div class="q-stat"><div class="q-snum" id="qR">0</div><div class="q-slbl">верно</div></div>
+          <div class="q-stat"><div class="q-snum" id="qL">25</div><div class="q-slbl">осталось</div></div>
+          <div class="q-stat"><div class="q-snum" id="qW">0</div><div class="q-slbl">ошибок</div></div>
+        </div>
+        <div class="q-progress"><div class="q-pfill" id="qProg"></div></div>
+        <div class="trap-badge trap-hidden" id="trapBadge">⚠ ЛОВУШКА</div>
+        <div class="qstack" id="qStack">
+          <div class="qbg2"></div><div class="qbg1"></div>
+          <div class="qcard" id="qCard">
+            <div class="sov sov-y" id="ovY">ВЕРНО ✓</div>
+            <div class="sov sov-n" id="ovN">НЕВЕРНО ✗</div>
+            <div class="fflash ff-ok" id="fOk">✓</div>
+            <div class="fflash ff-err" id="fErr">✗</div>
+            <div class="qcard-label">Это комбинация...</div>
+            <div class="qcard-claim" id="qClaim"></div>
+            <div class="qcard-cards" id="qCards"></div>
+            <div class="qcard-odds" id="qOdds"></div>
+            <div class="qcard-desc" id="qDesc"></div>
+          </div>
+        </div>
+        <div class="hint-row">
+          <div class="hint"><div class="hicon hi-n">✕</div><span>неверно</span></div>
+          <div class="hint"><div class="hicon hi-y">✓</div><span>верно</span></div>
+        </div>
+        <div class="act-row">
+          <button class="abtn abtn-n" onclick="qSwipe(false)">✕</button>
+          <button class="abtn abtn-y" onclick="qSwipe(true)">✓</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="screen" id="scrHands">
+      <div class="hands-screen">
+        <div class="hands-title">Стартовые руки</div>
+        <div class="hands-sub">Техасский холдем · до флопа</div>
+        <div class="legend">
+          <div class="leg-item"><div class="leg-dot ld-blue"></div>Любая позиция</div>
+          <div class="leg-item"><div class="leg-dot ld-green"></div>Средняя / поздняя</div>
+          <div class="leg-item"><div class="leg-dot ld-yellow"></div>Только поздняя</div>
+          <div class="leg-item"><div class="leg-dot ld-red"></div>Не играть</div>
+        </div>
+        <div class="hands-group">
+          <div class="group-header gh-blue"><div class="gh-dot ghd-blue"></div><div><div class="gh-title">Любая позиция — рейзи</div><div class="gh-hint">Топ руки, заходи откуда угодно</div></div></div>
+          <div class="hands-list" id="listBlue"></div>
+        </div>
+        <div class="hands-group">
+          <div class="group-header gh-green"><div class="gh-dot ghd-green"></div><div><div class="gh-title">Средняя / поздняя позиция</div><div class="gh-hint">С ранней позиции — осторожнее</div></div></div>
+          <div class="hands-list" id="listGreen"></div>
+        </div>
+        <div class="hands-group">
+          <div class="group-header gh-yellow"><div class="gh-dot ghd-yellow"></div><div><div class="gh-title">Только поздняя позиция</div><div class="gh-hint">Ходишь последним — можно. С ранней — пас</div></div></div>
+          <div class="hands-list" id="listYellow"></div>
+        </div>
+        <div class="hands-group">
+          <div class="group-header gh-red"><div class="gh-dot ghd-red"></div><div><div class="gh-title">Не играть — сбрасывай</div><div class="gh-hint">Проигрышные руки, всегда пас</div></div></div>
+          <div class="hands-list" id="listRed"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const COMBOS=[
+  {rank:10,name:"Старшая карта",odds:"1 к 1",desc:"Нет совпадений — побеждает наибольшая карта",cards:[{r:"A",s:"♦",c:"cr",h:1},{r:"2",s:"♣",c:"cb"},{r:"4",s:"♥",c:"cr"},{r:"8",s:"♣",c:"cb"},{r:"6",s:"♥",c:"cr"}]},
+  {rank:9,name:"Пара",odds:"1 к 2",desc:"Две карты одного достоинства",cards:[{r:"K",s:"♥",c:"cr",h:1},{r:"K",s:"♦",c:"cr",h:1},{r:"9",s:"♠",c:"cb"},{r:"3",s:"♣",c:"cb"},{r:"6",s:"♥",c:"cr"}]},
+  {rank:8,name:"Две пары",odds:"1 к 21",desc:"Две разные пары одного достоинства",cards:[{r:"2",s:"♠",c:"cb",h:1},{r:"2",s:"♣",c:"cb",h:1},{r:"10",s:"♥",c:"cr",h:1},{r:"10",s:"♦",c:"cr",h:1},{r:"8",s:"♥",c:"cr"}]},
+  {rank:7,name:"Сет (тройка)",odds:"1 к 47",desc:"Три карты одного достоинства",cards:[{r:"5",s:"♠",c:"cb",h:1},{r:"5",s:"♣",c:"cb",h:1},{r:"5",s:"♥",c:"cr",h:1},{r:"8",s:"♥",c:"cr"},{r:"10",s:"♦",c:"cr"}]},
+  {rank:6,name:"Стрит",odds:"1 к 255",desc:"Пять карт подряд, разные масти",cards:[{r:"A",s:"♠",c:"cb",h:1},{r:"2",s:"♦",c:"cr",h:1},{r:"3",s:"♥",c:"cr",h:1},{r:"4",s:"♣",c:"cb",h:1},{r:"5",s:"♠",c:"cb",h:1}]},
+  {rank:5,name:"Флеш",odds:"1 к 508",desc:"Пять карт одной масти",cards:[{r:"K",s:"♠",c:"cb",h:1},{r:"8",s:"♠",c:"cb",h:1},{r:"2",s:"♠",c:"cb",h:1},{r:"9",s:"♠",c:"cb",h:1},{r:"5",s:"♠",c:"cb",h:1}]},
+  {rank:4,name:"Фул хаус",odds:"1 к 694",desc:"Тройка + пара",cards:[{r:"3",s:"♥",c:"cr",h:1},{r:"3",s:"♦",c:"cr",h:1},{r:"J",s:"♠",c:"cb",h:1},{r:"J",s:"♣",c:"cb",h:1},{r:"J",s:"♥",c:"cr",h:1}]},
+  {rank:3,name:"Каре",odds:"1 к 4165",desc:"Четыре карты одного достоинства",cards:[{r:"2",s:"♥",c:"cr",h:1},{r:"2",s:"♦",c:"cr",h:1},{r:"2",s:"♠",c:"cb",h:1},{r:"2",s:"♣",c:"cb",h:1},{r:"A",s:"♥",c:"cr"}]},
+  {rank:2,name:"Стрит флеш",odds:"1 к 72000",desc:"Стрит одной масти",cards:[{r:"6",s:"♥",c:"cr",h:1},{r:"7",s:"♥",c:"cr",h:1},{r:"8",s:"♥",c:"cr",h:1},{r:"9",s:"♥",c:"cr",h:1},{r:"10",s:"♥",c:"cr",h:1}]},
+  {rank:1,name:"Флеш рояль",odds:"1 к 650 000",desc:"Стрит флеш от десяти до туза",cards:[{r:"10",s:"♣",c:"cb",h:1},{r:"J",s:"♣",c:"cb",h:1},{r:"Q",s:"♣",c:"cb",h:1},{r:"K",s:"♣",c:"cb",h:1},{r:"A",s:"♣",c:"cb",h:1}]}
+];
+const TRAPS=[
+  {name:"Стрит",isTrue:false,odds:"1 к 255",desc:"Смотри внимательно на масти",cards:[{r:"4",s:"♥",c:"cr"},{r:"5",s:"♥",c:"cr"},{r:"6",s:"♥",c:"cr"},{r:"7",s:"♥",c:"cr"},{r:"8",s:"♥",c:"cr"}]},
+  {name:"Флеш",isTrue:false,odds:"1 к 508",desc:"Смотри внимательно на порядок",cards:[{r:"7",s:"♠",c:"cb"},{r:"8",s:"♠",c:"cb"},{r:"9",s:"♠",c:"cb"},{r:"10",s:"♠",c:"cb"},{r:"J",s:"♠",c:"cb"}]},
+  {name:"Фул хаус",isTrue:false,odds:"1 к 694",desc:"Смотри внимательно на количество",cards:[{r:"K",s:"♠",c:"cb"},{r:"K",s:"♥",c:"cr"},{r:"K",s:"♦",c:"cr"},{r:"K",s:"♣",c:"cb"},{r:"A",s:"♥",c:"cr"}]},
+  {name:"Сет (тройка)",isTrue:false,odds:"1 к 47",desc:"Смотри внимательно на все карты",cards:[{r:"Q",s:"♠",c:"cb"},{r:"Q",s:"♥",c:"cr"},{r:"Q",s:"♦",c:"cr"},{r:"7",s:"♣",c:"cb"},{r:"7",s:"♥",c:"cr"}]},
+  {name:"Флеш рояль",isTrue:false,odds:"1 к 650 000",desc:"Смотри внимательно на масти",cards:[{r:"A",s:"♠",c:"cb"},{r:"K",s:"♥",c:"cr"},{r:"Q",s:"♦",c:"cr"},{r:"J",s:"♣",c:"cb"},{r:"10",s:"♠",c:"cb"}]},
+  {name:"Стрит",isTrue:true,odds:"1 к 255",desc:"Туз может быть младшей картой",cards:[{r:"A",s:"♦",c:"cr"},{r:"2",s:"♣",c:"cb"},{r:"3",s:"♥",c:"cr"},{r:"4",s:"♠",c:"cb"},{r:"5",s:"♣",c:"cb"}]},
+  {name:"Флеш",isTrue:true,odds:"1 к 508",desc:"Пять карт одной масти не подряд",cards:[{r:"2",s:"♦",c:"cr"},{r:"5",s:"♦",c:"cr"},{r:"9",s:"♦",c:"cr"},{r:"J",s:"♦",c:"cr"},{r:"A",s:"♦",c:"cr"}]},
+  {name:"Две пары",isTrue:false,odds:"1 к 21",desc:"Смотри внимательно на количество пар",cards:[{r:"8",s:"♠",c:"cb"},{r:"8",s:"♥",c:"cr"},{r:"8",s:"♦",c:"cr"},{r:"J",s:"♣",c:"cb"},{r:"J",s:"♥",c:"cr"}]},
+];
+const STARTING={
+  blue:[["A","♠","A","♥",false],["K","♠","K","♥",false],["Q","♠","Q","♥",false],["J","♠","J","♥",false],["10","♠","10","♥",false],["A","♠","K","♥",false],["A","♥","K","♥",true],["A","♠","Q","♥",false],["A","♥","Q","♥",true],["A","♠","J","♥",false],["A","♥","J","♥",true],["K","♠","Q","♥",false],["K","♥","Q","♥",true],["K","♠","J","♥",false],["K","♥","J","♥",true],["Q","♠","J","♥",false],["Q","♥","J","♥",true],["A","♠","10","♥",false],["A","♥","10","♥",true],["K","♠","10","♥",false],["K","♥","10","♥",true],["Q","♠","10","♥",false],["Q","♥","10","♥",true],["J","♥","10","♥",true]],
+  green:[["9","♠","9","♥",false],["8","♠","8","♥",false],["7","♠","7","♥",false],["6","♠","6","♥",false],["A","♠","9","♥",false],["A","♥","9","♥",true],["A","♠","8","♥",false],["A","♥","8","♥",true],["A","♠","7","♥",false],["A","♥","7","♥",true],["K","♠","9","♥",false],["K","♥","9","♥",true],["K","♥","8","♥",true],["Q","♥","9","♥",true],["J","♥","9","♥",true],["10","♥","9","♥",true],["9","♥","8","♥",true],["8","♥","7","♥",true],["10","♠","9","♥",false],["9","♠","8","♥",false]],
+  yellow:[["5","♠","5","♥",false],["4","♠","4","♥",false],["3","♠","3","♥",false],["2","♠","2","♥",false],["A","♠","6","♥",false],["A","♥","6","♥",true],["A","♠","5","♥",false],["A","♥","5","♥",true],["A","♠","4","♥",false],["A","♥","4","♥",true],["A","♠","3","♥",false],["A","♥","3","♥",true],["A","♠","2","♥",false],["A","♥","2","♥",true],["K","♠","7","♥",false],["K","♠","6","♥",false],["K","♠","5","♥",false],["K","♠","4","♥",false],["K","♠","3","♥",false],["K","♠","2","♥",false],["Q","♠","8","♥",false],["7","♥","6","♥",true],["6","♥","5","♥",true],["5","♥","4","♥",true],["8","♠","7","♥",false],["7","♠","6","♥",false],["6","♠","5","♥",false],["5","♠","4","♥",false]],
+  red:[["Q","♠","7","♥",false],["Q","♠","6","♥",false],["Q","♠","5","♥",false],["Q","♠","4","♥",false],["Q","♠","3","♥",false],["Q","♠","2","♥",false],["J","♠","6","♥",false],["J","♠","5","♥",false],["J","♠","4","♥",false],["J","♠","3","♥",false],["J","♠","2","♥",false],["10","♠","6","♥",false],["10","♠","5","♥",false],["10","♠","4","♥",false],["10","♠","3","♥",false],["10","♠","2","♥",false],["9","♠","5","♥",false],["9","♠","4","♥",false],["9","♠","3","♥",false],["9","♠","2","♥",false],["8","♠","4","♥",false],["8","♠","3","♥",false],["8","♠","2","♥",false],["7","♠","4","♥",false],["7","♠","3","♥",false],["7","♠","2","♥",false],["6","♠","4","♥",false],["6","♠","3","♥",false],["6","♠","2","♥",false],["5","♠","3","♥",false],["5","♠","2","♥",false],["4","♠","3","♥",false],["4","♠","2","♥",false],["3","♠","2","♥",false]]
+};
+
+function sc(s){return(s==='♥'||s==='♦')?'cr':'cb';}
+function mkCardEl(r,s,g){const d=document.createElement('div');d.className=`hc ${g}`;d.innerHTML=`<span class="hr ${sc(s)}">${r}</span><span class="hs ${sc(s)}">${s}</span>`;return d;}
+function mkPair(hand,g){const[r1,s1,r2,s2,suited]=hand;const w=document.createElement('div');w.className='hand-pair';w.appendChild(mkCardEl(r1,s1,g));w.appendChild(mkCardEl(r2,suited?s1:s2,g));return w;}
+const gm={blue:'gbl',green:'ggr',yellow:'gyw',red:'grd'};
+['blue','green','yellow','red'].forEach(t=>{const c=document.getElementById('list'+t[0].toUpperCase()+t.slice(1));STARTING[t].forEach(h=>c.appendChild(mkPair(h,gm[t])));});
+
+function mkCards(cards,hl){return cards.map((c,i)=>{const d=document.createElement('div');d.className='pc'+(c.h&&hl?' hl':'');d.style.animationDelay=(i*0.05)+'s';d.innerHTML=`<span class="pr ${c.c}">${c.r}</span><span class="ps ${c.c}">${c.s}</span>`;return d;});}
+const rg=document.getElementById('refGrid');
+COMBOS.forEach(h=>{const row=document.createElement('div');row.className='ref-row';const top=document.createElement('div');top.className='ref-top';const rk=document.createElement('div');rk.className='ref-rank';rk.textContent=h.rank;const info=document.createElement('div');info.innerHTML=`<div class="ref-name">${h.name}</div><div class="ref-odds">${h.odds}</div><div class="ref-desc">${h.desc}</div>`;top.appendChild(rk);top.appendChild(info);const cc=document.createElement('div');cc.className='ref-cards-row';mkCards(h.cards,true).forEach(c=>cc.appendChild(c));row.appendChild(top);row.appendChild(cc);rg.appendChild(row);});
+
+let deck=[],qi=0,qR=0,qW=0,drag=false,sx=0,cx=0;
+function buildDeck(){const d=[];COMBOS.forEach(h=>{const t=Math.random()>0.4;let name=h.name;if(!t){const o=COMBOS.filter(x=>x.name!==h.name);name=o[Math.floor(Math.random()*o.length)].name;}d.push({cards:h.cards,name,isTrue:t,odds:h.odds,desc:h.desc,trap:false});});for(let i=0;i<7;i++){const h=COMBOS[Math.floor(Math.random()*COMBOS.length)];const t=Math.random()>0.4;let name=h.name;if(!t){const o=COMBOS.filter(x=>x.name!==h.name);name=o[Math.floor(Math.random()*o.length)].name;}d.push({cards:h.cards,name,isTrue:t,odds:h.odds,desc:h.desc,trap:false});}const ts=[...TRAPS].sort(()=>Math.random()-0.5).slice(0,8);ts.forEach(t=>d.push({cards:t.cards,name:t.name,isTrue:t.isTrue,odds:t.odds,desc:t.desc,trap:true}));for(let i=d.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[d[i],d[j]]=[d[j],d[i]];}return d.slice(0,25);}
+function renderQ(){if(qi>=deck.length){showRes();return;}const q=deck[qi];document.getElementById('qClaim').textContent=q.name;document.getElementById('qOdds').textContent='Вероятность: '+q.odds;document.getElementById('qDesc').textContent=q.desc;const tb=document.getElementById('trapBadge');q.trap?tb.classList.remove('trap-hidden'):tb.classList.add('trap-hidden');const cc=document.getElementById('qCards');cc.innerHTML='';mkCards(q.cards,false).forEach(c=>cc.appendChild(c));document.getElementById('qProg').style.width=((qi/deck.length)*100)+'%';document.getElementById('qL').textContent=deck.length-qi;document.getElementById('qR').textContent=qR;document.getElementById('qW').textContent=qW;const card=document.getElementById('qCard');card.style.transform='';document.getElementById('ovY').style.opacity=0;document.getElementById('ovN').style.opacity=0;card.classList.remove('sw-r','sw-l');}
+function qSwipe(yes){const card=document.getElementById('qCard');if(!card)return;const q=deck[qi];const ok=yes===q.isTrue;if(ok)qR++;else qW++;const fl=document.getElementById(ok?'fOk':'fErr');fl.classList.remove('doflash');void fl.offsetWidth;fl.classList.add('doflash');card.classList.add(yes?'sw-r':'sw-l');qi++;setTimeout(renderQ,370);}
+function showRes(){const pct=Math.round(qR/deck.length*100);document.getElementById('trapBadge').classList.add('trap-hidden');document.getElementById('qStack').innerHTML=`<div class="result-wrap"><h2>${pct>=88?'Профи!':pct>=70?'Отлично!':pct>=50?'Неплохо!':'Тренируйся!'}</h2><p>Правильно: ${qR} из ${deck.length}<br>Ошибок: ${qW}<br>Результат: ${pct}%<br><br>${pct>=88?'Ловушки тебя не поймали 🃏':pct>=70?'Почти все ловушки разгаданы!':pct>=50?'Часть ловушек сработала 😈':'Ловушки сделали своё дело 😈'}</p><button class="rbtn" onclick="restartQ()">Ещё раз</button></div>`;document.getElementById('qProg').style.width='100%';}
+function restartQ(){deck=buildDeck();qi=0;qR=0;qW=0;document.getElementById('qStack').innerHTML=`<div class="qbg2"></div><div class="qbg1"></div><div class="qcard" id="qCard"><div class="sov sov-y" id="ovY">ВЕРНО ✓</div><div class="sov sov-n" id="ovN">НЕВЕРНО ✗</div><div class="fflash ff-ok" id="fOk">✓</div><div class="fflash ff-err" id="fErr">✗</div><div class="qcard-label">Это комбинация...</div><div class="qcard-claim" id="qClaim"></div><div class="qcard-cards" id="qCards"></div><div class="qcard-odds" id="qOdds"></div><div class="qcard-desc" id="qDesc"></div></div>`;initDrag();renderQ();}
+function initDrag(){const el=document.getElementById('qStack');if(!el)return;el.onmousedown=function(e){drag=true;sx=e.clientX;cx=0;e.preventDefault();};el.ontouchstart=function(e){drag=true;sx=e.touches[0].clientX;cx=0;};document.onmousemove=function(e){if(!drag)return;const card=document.getElementById('qCard');if(!card)return;const x=e.clientX-sx;cx=x;card.style.transform=`translateX(${x}px) rotate(${x*0.07}deg)`;const t=Math.min(Math.abs(x)/80,1);const oy=document.getElementById('ovY'),on=document.getElementById('ovN');if(x>20){oy&&(oy.style.opacity=t);on&&(on.style.opacity=0);}else if(x<-20){on&&(on.style.opacity=t);oy&&(oy.style.opacity=0);}else{oy&&(oy.style.opacity=0);on&&(on.style.opacity=0);}};document.ontouchmove=function(e){if(!drag)return;const card=document.getElementById('qCard');if(!card)return;const x=e.touches[0].clientX-sx;cx=x;card.style.transform=`translateX(${x}px) rotate(${x*0.07}deg)`;const t=Math.min(Math.abs(x)/80,1);const oy=document.getElementById('ovY'),on=document.getElementById('ovN');if(x>20){oy&&(oy.style.opacity=t);on&&(on.style.opacity=0);}else if(x<-20){on&&(on.style.opacity=t);oy&&(oy.style.opacity=0);}else{oy&&(oy.style.opacity=0);on&&(on.style.opacity=0);}};document.onmouseup=document.ontouchend=function(){if(!drag)return;drag=false;if(cx>80)qSwipe(true);else if(cx<-80)qSwipe(false);else{const card=document.getElementById('qCard');if(card){card.style.transform='';document.getElementById('ovY').style.opacity=0;document.getElementById('ovN').style.opacity=0;}}cx=0;};}
+function goTab(idx){[0,1,2].forEach(i=>{const t=document.getElementById('tab'+i);t.style.border=i===idx?'2px solid #d4af37':'2px solid rgba(212,175,55,0.5)';t.style.fontWeight=i===idx?'700':'500';});document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));['scrRef','scrQuiz','scrHands'].forEach((id,i)=>{if(i===idx)document.getElementById(id).classList.add('active');});if(idx===1&&deck.length===0){deck=buildDeck();initDrag();renderQ();}}
+</script>
+</body>
+</html>
